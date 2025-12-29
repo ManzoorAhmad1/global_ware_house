@@ -1,0 +1,341 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Menu,
+  X,
+  Phone,
+  Shield,
+  ChevronDown,
+  Sun,
+  Moon,
+  LogIn,
+  User,
+  ShieldCheck
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button, ActionIcon, Text } from "rizzui";
+import Image from "next/image";
+import logo from '../../../public/assests/home.png'
+const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Progress bar animation
+  useEffect(() => {
+    if (isLoading && progress < 90) {
+      // Fast progress to 90%
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 90) return 90;
+          return prev + 15;
+        });
+      }, 100);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isLoading, progress]);
+
+  // Complete progress when page actually loads (pathname changes)
+  useEffect(() => {
+    if (isLoading) {
+      // Complete to 100%
+      setProgress(100);
+      
+      // Hide progress bar after completion
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        setProgress(0);
+      }, 400);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [pathname]);
+
+  // Handle link click to start progress
+  const handleLinkClick = (href: string) => {
+    if (href !== pathname) {
+      setIsLoading(true);
+      setProgress(0);
+      closeAllMenus();
+    } else {
+      closeAllMenus();
+    }
+  };
+
+  const navItems = [
+    { label: "Home", href: "/" },
+    {
+      label: "Services",
+      href: "/services"
+    },
+    { label: "About Us", href: "/about" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Blog", href: "/blogs" },
+    { label: "Contact", href: "/contact" },
+  ];
+
+  const closeAllMenus = () => {
+    setIsMobileMenuOpen(false);
+    setIsServicesOpen(false);
+    setActiveDropdown(null);
+  };
+
+  const handleServicesHover = () => {
+    setActiveDropdown("services");
+  };
+
+  const handleServicesLeave = () => {
+    setTimeout(() => {
+      setActiveDropdown(null);
+    }, 200);
+  };
+
+  return (
+    <>
+      {/* Progress Bar */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            className="fixed top-0 left-0 right-0 z-[60] h-1 bg-gray-200 dark:bg-gray-800"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="h-full bg-gradient-to-r from-primary-navy via-accent-gold to-accent-gold shadow-lg shadow-accent-gold/50"
+              initial={{ width: "0%" }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <header
+        className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? "bg-white/95 dark:bg-gray-900/95 shadow-lg backdrop-blur-sm py-3"
+          : "bg-white dark:bg-gray-900 py-4 lg:py-6"
+          }`}
+      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
+          {/* Logo - Always visible */}
+          <div className="flex items-center">
+            <Link
+              href="/"
+              className="flex items-center space-x-2 lg:space-x-3 group"
+              onClick={closeAllMenus}
+            >
+              <motion.div
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.5, type: "spring" }}
+              >
+                <Image src={logo} alt='DMCA Master Logo' width={70} height={70} />
+              </motion.div>
+              <div>
+              </div>
+            </Link>
+          </div>
+
+          {/* DESKTOP NAVIGATION - Shows on large screens (1024px and above) */}
+          <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2" ref={dropdownRef}>
+            {navItems.map((item) => (
+              <div
+                key={item.label}
+                className="relative"
+              >
+                <Link
+                  href={item.href}
+                  className={`relative px-4 py-2 transition-colors duration-200 rounded-lg mx-1 font-medium ${
+                    pathname === item.href
+                      ? "text-accent-gold bg-accent-gold/10 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-accent-gold"
+                      : "text-gray-700 dark:text-gray-300 hover:text-accent-gold after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-accent-gold hover:after:w-full after:transition-all after:duration-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  }`}
+                  onClick={() => handleLinkClick(item.href)}
+                >
+                  <span>{item.label}</span>
+                </Link>
+              </div>
+            ))}
+
+            {/* Desktop Right Side Actions */}
+            <div className="flex items-center space-x-3 ml-6">
+              {/* Theme Toggle - Icon Only */}
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 15 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <button
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  aria-label="Toggle theme"
+                >
+                  {mounted && theme === "dark" ? (
+                    <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                  ) : (
+                    <Moon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                  )}
+                </button>
+              </motion.div>
+
+              {/* Login Button - Text Only */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Link href="/login" onClick={() => handleLinkClick('/login')}>
+                  <button className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-accent-gold transition-colors font-medium">
+                    Login
+                  </button>
+                </Link>
+              </motion.div>
+            </div>
+          </nav>
+
+          {/* MOBILE/TABLET MENU BUTTON - Shows on screens below 1024px */}
+          <div className="flex items-center space-x-2 lg:hidden">
+            {/* Phone CTA - Show only on tablets */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="hidden sm:block"
+            >
+              <a href="tel:+923066768863" onClick={closeAllMenus}>
+                <Button size="sm" className="bg-accent-gold text-primary-navy hover:bg-yellow-600 shadow-md">
+                  <Phone className="h-4 w-4 mr-1" />
+                  Call
+                </Button>
+              </a>
+            </motion.div>
+
+            {/* Mobile Menu Toggle */}
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <ActionIcon
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                variant="outline"
+                size="lg"
+                className="border-gray-300 dark:border-gray-600"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </ActionIcon>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* MOBILE/TABLET MENU - Shows on screens below 1024px */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden overflow-hidden bg-white dark:bg-gray-900 rounded-xl mt-2 shadow-xl border border-gray-200 dark:border-gray-700"
+            >
+              <div className="py-4">
+                <div className="space-y-1">
+                  {navItems.map((item) => (
+                    <div key={item.label}>
+                      <Link
+                        href={item.href}
+                        className={`block py-3 px-4 transition-colors font-medium rounded-lg ${
+                          pathname === item.href
+                            ? "text-accent-gold bg-accent-gold/10 border-l-4 border-accent-gold"
+                            : "text-primary-navy dark:text-white hover:text-accent-gold hover:bg-gray-100 dark:hover:bg-gray-800"
+                        }`}
+                        onClick={() => handleLinkClick(item.href)}
+                      >
+                        {item.label}
+                      </Link>
+                    </div>
+                  ))}
+
+                  {/* Mobile Login & Dashboard */}
+                  <div className="grid grid-cols-2 gap-2 pt-4 px-4">
+                    <Link
+                      href="/login"
+                      className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      onClick={() => handleLinkClick('/login')}
+                    >
+                      <LogIn className="h-4 w-4" />
+                      <span>Login</span>
+                    </Link>
+
+                  </div>
+
+                  {/* Theme Toggle in Mobile Menu */}
+                  <div className="pt-4 px-4">
+                    <button
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {mounted && theme === "dark" ? (
+                        <>
+                          <Sun className="h-4 w-4" />
+                          <span>Light Mode</span>
+                        </>
+                      ) : (
+                        <>
+                          <Moon className="h-4 w-4" />
+                          <span>Dark Mode</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </header>
+    </>
+  );
+};
+
+export default Header;

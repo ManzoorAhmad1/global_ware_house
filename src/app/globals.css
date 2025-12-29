@@ -1,0 +1,271 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* E-Commerce Color Scheme - Blue & White */
+:root {
+  --primary-blue: #2563eb;
+  --primary-dark-blue: #1e40af;
+  --primary-light-blue: #3b82f6;
+  --accent-blue: #60a5fa;
+  --background-light: #ffffff;
+  --background-gray: #f8fafc;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --success-green: #10b981;
+  --error-red: #ef4444;
+  --warning-yellow: #f59e0b;
+}
+
+[data-theme="dark"] {
+  --primary-blue: #3b82f6;
+  --primary-dark-blue: #2563eb;
+  --primary-light-blue: #60a5fa;
+  --accent-blue: #93c5fd;
+  --background-light: #0f172a;
+  --background-gray: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --border-color: #334155;
+  --success-green: #34d399;
+  --error-red: #f87171;
+  --warning-yellow: #fbbf24;
+}
+
+/* Base Styles */
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+  
+  body {
+    @apply font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Professional Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-blue-500 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-blue-600;
+  }
+  
+  /* Selection Color */
+  ::selection {
+    @apply bg-blue-500/30 text-gray-900;
+  }
+  
+  /* Focus Styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+  }
+}
+
+/* Custom Components */
+@layer components {
+  /* Product Card */
+  .product-card {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm 
+           transition-all duration-300 hover:shadow-xl overflow-hidden
+           hover:-translate-y-1 cursor-pointer;
+  }
+  
+  /* Buttons */
+  .btn {
+    @apply px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium transition-all duration-300 
+           focus:outline-none focus:ring-2 focus:ring-offset-2 
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply btn bg-blue-600 text-white 
+           hover:bg-blue-700 
+           focus:ring-blue-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-gray-200 text-gray-800 
+           hover:bg-gray-300 
+           dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600
+           focus:ring-gray-400;
+  }
+  
+  .btn-outline {
+    @apply btn border-2 border-blue-600 text-blue-600 
+           bg-transparent hover:bg-blue-600 hover:text-white 
+           dark:border-blue-400 dark:text-blue-400 
+           dark:hover:bg-blue-500 dark:hover:text-white;
+  }
+  
+  /* Section Styles */
+  .section {
+    @apply py-8 sm:py-12 lg:py-20 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Navigation Styles */
+  .nav-link {
+    @apply relative px-3 py-2 sm:px-4 sm:py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 
+           dark:hover:text-blue-400 transition-colors duration-200 font-medium;
+  }
+  
+  .nav-link.active {
+    @apply text-blue-600 dark:text-blue-400;
+  }
+  
+  /* Typography */
+  .heading {
+    @apply font-bold tracking-tight;
+  }
+  
+  .heading-1 {
+    @apply heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
+  }
+  
+  .heading-2 {
+    @apply heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+  }
+  
+  .heading-3 {
+    @apply heading text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+  }
+  
+  .subtitle {
+    @apply text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed;
+  }
+  
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium;
+  }
+  
+  .badge-primary {
+    @apply badge bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300;
+  }
+  
+  .badge-success {
+    @apply badge bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300;
+  }
+  
+  .badge-sale {
+    @apply badge bg-red-500 text-white;
+  }
+}
+
+/* Animations */
+@layer utilities {
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse-slow 2s ease-in-out infinite;
+  }
+  
+  /* Responsive utilities */
+  .mobile-only {
+    @apply block sm:hidden;
+  }
+  
+  .tablet-only {
+    @apply hidden sm:block lg:hidden;
+  }
+  
+  .desktop-only {
+    @apply hidden lg:block;
+  }
+  
+  .mobile-tablet-only {
+    @apply block lg:hidden;
+  }
+}
+
+/* NProgress Progress Bar Styling */
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: #2563eb !important;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+}
+
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px #2563eb, 0 0 5px #2563eb;
+  opacity: 1;
+  transform: rotate(3deg) translate(0px, -4px);
+}
+
+[data-theme="dark"] #nprogress .bar {
+  background: #3b82f6 !important;
+}
+
+[data-theme="dark"] #nprogress .peg {
+  box-shadow: 0 0 10px #3b82f6, 0 0 5px #3b82f6;
+}
