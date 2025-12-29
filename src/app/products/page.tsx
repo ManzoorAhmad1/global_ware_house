@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { addToCart } from '@/redux/slices/cartSlice';
-import { filterByCategory } from '@/redux/slices/productsSlice';
+import { filterByCategory, setProducts } from '@/redux/slices/productsSlice';
 import { Button } from 'rizzui';
-import { categories } from '@/data/mockData';
+import { categories, mockProducts } from '@/data/mockData';
 import toast from 'react-hot-toast';
 
 export default function ProductsPage() {
@@ -16,6 +16,11 @@ export default function ProductsPage() {
   const [selectedSizes, setSelectedSizes] = useState<{ [key: string]: string }>({});
   const [selectedColors, setSelectedColors] = useState<{ [key: string]: string }>({});
   const [categoryFilter, setCategoryFilter] = useState('all');
+
+  // Load products on mount
+  useEffect(() => {
+    dispatch(setProducts(mockProducts));
+  }, [dispatch]);
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
